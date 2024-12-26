@@ -25,7 +25,7 @@ public class Main {
                 System.out.println("4. View All Drinks");
                 System.out.println("5. Exit");
                 int choice = scanner.nextInt();
-                scanner.nextLine();  // Consume newline
+                scanner.nextLine();
                 switch (choice) {
                     case 1 -> drinkController.handleAddDrink();
                     case 2 -> drinkController.handleUpdateDrink();
