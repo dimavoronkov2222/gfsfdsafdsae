@@ -49,6 +49,7 @@ class CustomerDaoImplTest {
         List<Customer> customers = customerDao.getAllCustomers();
         assertEquals(1, customers.size());
         assertEquals("John Doe", customers.get(0).getName());
+        assertNotNull(customers.get(0).getRegistrationDate());
     }
     @Test
     void testUpdateCustomer() throws SQLException {

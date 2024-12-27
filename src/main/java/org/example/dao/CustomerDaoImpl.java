@@ -1,50 +1,42 @@
 package org.example.dao;
-
 import org.example.model.Customer;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
-
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.List;
-
 @Repository
 public class CustomerDaoImpl implements CustomerDao {
     private final JdbcTemplate jdbcTemplate;
-
     public CustomerDaoImpl(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
-
-    private RowMapper<Customer> customerRowMapper = (rs, rowNum) -> new Customer(
-            rs.getInt("id"),
-            rs.getString("name"),
-            rs.getString("email"),
-            rs.getDate("birth_date").toLocalDate(),
-            rs.getDate("registration_date").toLocalDate(),
-            rs.getDouble("discount")
-    );
-
+    private RowMapper<Customer> customerRowMapper = (rs, rowNum) -> {
+        int id = rs.getInt("id");
+        String name = rs.getString("name");
+        String email = rs.getString("email");
+        LocalDate birthDate = rs.getDate("birth_date") != null ? rs.getDate("birth_date").toLocalDate() : null;
+        LocalDate registrationDate = rs.getDate("registration_date") != null ? rs.getDate("registration_date").toLocalDate() : null;
+        double discount = rs.getDouble("discount");
+        return new Customer(id, name, email, birthDate, registrationDate, discount);
+    };
     @Override
     public void insertCustomer(Customer customer) {
         String sql = "INSERT INTO Customers (name, email, birth_date, registration_date, discount) VALUES (?, ?, ?, ?, ?)";
         jdbcTemplate.update(sql, customer.getName(), customer.getEmail(), customer.getBirthDate(), customer.getRegistrationDate(), customer.getDiscount());
     }
-
     @Override
     public void updateCustomer(Customer customer) {
         String sql = "UPDATE Customers SET name = ?, email = ?, birth_date = ?, registration_date = ?, discount = ? WHERE id = ?";
         jdbcTemplate.update(sql, customer.getName(), customer.getEmail(), customer.getBirthDate(), customer.getRegistrationDate(), customer.getDiscount(), customer.getId());
     }
-
     @Override
     public void deleteCustomer(int customerId) {
         String sql = "DELETE FROM Customers WHERE id = ?";
         jdbcTemplate.update(sql, customerId);
     }
-
     @Override
     public Customer getCustomerById(int customerId) {
         String sql = "SELECT * FROM Customers WHERE id = ?";
@@ -72,7 +64,6 @@ public class CustomerDaoImpl implements CustomerDao {
     public JdbcTemplate getJdbcTemplate() {
         return jdbcTemplate;
     }
-
     @Override
     public double getMinDiscount() {
         String sql = "SELECT MIN(discount) FROM Customers";

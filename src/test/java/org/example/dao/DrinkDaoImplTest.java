@@ -4,9 +4,9 @@ import org.junit.jupiter.api.*;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.List;
+import org.example.dao.DrinkDaoImpl;
 import static org.junit.jupiter.api.Assertions.*;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class DrinkDaoImplTest {
@@ -15,21 +15,23 @@ class DrinkDaoImplTest {
     @BeforeAll
     void setUp() throws SQLException {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
-        dataSource.setDriverClassName("org.h2.Driver");
-        dataSource.setUrl("jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1");
-        dataSource.setUsername("sa");
-        dataSource.setPassword("");
+        dataSource.setDriverClassName("org.postgresql.Driver");
+        dataSource.setUrl("jdbc:postgresql://localhost:5432/shop");
+        dataSource.setUsername("postgres");
+        dataSource.setPassword("8289/00/5654");
         jdbcTemplate = new JdbcTemplate(dataSource);
-        jdbcTemplate.execute("CREATE TABLE Drinks (" +
-                "id INT AUTO_INCREMENT PRIMARY KEY," +
+        jdbcTemplate.execute("CREATE TABLE IF NOT EXISTS Drinks (" +
+                "id SERIAL PRIMARY KEY," +
                 "name_en VARCHAR(255)," +
                 "name_other VARCHAR(255)," +
-                "price DOUBLE)");
+                "price DOUBLE PRECISION)");
         drinkDao = new DrinkDaoImpl(jdbcTemplate);
+        Connection connection = dataSource.getConnection();
+        System.out.println("Connected to: " + connection.getMetaData().getURL());
     }
     @AfterAll
     void tearDown() throws SQLException {
-        jdbcTemplate.execute("DROP TABLE Drinks");
+        jdbcTemplate.execute("DROP TABLE IF EXISTS Drinks CASCADE");
     }
     @BeforeEach
     void cleanUp() throws SQLException {
