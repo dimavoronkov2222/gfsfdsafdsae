@@ -1,38 +1,47 @@
 package org.example.model;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import java.time.LocalDate;
+@Data
+@NoArgsConstructor
+@Entity
+@Table(name = "customers")
 public class Customer {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+
+    @Column(name = "name", nullable = false)
     private String name;
+
+    @Column(name = "email", nullable = false, unique = true)
     private String email;
+
+    @Column(name = "registration_date", nullable = false)
     private LocalDate registrationDate;
-    public Customer(int id, String name, String email, LocalDate registrationDate) {
+
+    @Column(name = "birth_date", nullable = false)
+    private LocalDate birthDate;
+
+    @Column(name = "discount")
+    private double discount;
+
+    public Customer(int id, String name, String email, LocalDate birthDate) {
         this.id = id;
         this.name = name;
         this.email = email;
-        this.registrationDate = registrationDate;
+        this.birthDate = birthDate;
     }
-    public int getId() {
-        return id;
-    }
-    public void setId(int id) {
+
+    public Customer(int id, String name, String email, LocalDate birthDate, LocalDate registrationDate, double discount) {
         this.id = id;
-    }
-    public String getName() {
-        return name;
-    }
-    public void setName(String name) {
         this.name = name;
-    }
-    public String getEmail() {
-        return email;
-    }
-    public void setEmail(String email) {
         this.email = email;
-    }
-    public LocalDate getRegistrationDate() {
-        return registrationDate;
-    }
-    public void setRegistrationDate(LocalDate registrationDate) {
+        this.birthDate = birthDate;
         this.registrationDate = registrationDate;
+        this.discount = discount;
     }
 }

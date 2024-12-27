@@ -1,20 +1,25 @@
 package org.example.service;
 import org.example.dao.DrinkDao;
 import org.example.model.Drink;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
 class DrinkServiceTest {
+    @Mock
     private DrinkDao drinkDao;
+    @InjectMocks
     private DrinkService drinkService;
     @BeforeEach
     void setUp() {
-        drinkDao = mock(DrinkDao.class);
-        drinkService = new DrinkService(drinkDao);
+        MockitoAnnotations.openMocks(this);
     }
     @Test
     void addDrink() throws SQLException {

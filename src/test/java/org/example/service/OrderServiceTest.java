@@ -4,6 +4,9 @@ import org.example.model.Order;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -11,16 +14,17 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 class OrderServiceTest {
+    @Mock
     private OrderDao orderDao;
+    @InjectMocks
     private OrderService orderService;
     @BeforeEach
     void setUp() {
-        orderDao = mock(OrderDao.class);
-        orderService = new OrderService(orderDao);
+        MockitoAnnotations.openMocks(this);
     }
     @Test
     void placeOrder() throws SQLException {
-        Order order = new Order(1, 1, LocalDateTime.now());
+        Order order = new Order(1, 1, 1, LocalDateTime.now());
         orderService.placeOrder(order);
         ArgumentCaptor<Order> orderCaptor = ArgumentCaptor.forClass(Order.class);
         verify(orderDao, times(1)).insertOrder(orderCaptor.capture());

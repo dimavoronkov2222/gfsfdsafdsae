@@ -1,61 +1,43 @@
 package org.example.model;
+
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.time.LocalDateTime;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Entity
+@Table(name = "orders")
 public class Order {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+
+    @Column(name = "client_id", nullable = false)
     private int clientId;
+
+    @Column(name = "drink_id", nullable = false)
     private int drinkId;
+
+    @Column(name = "dessert_id")
     private int dessertId;
+
+    @Column(name = "order_time", nullable = false)
     private LocalDateTime orderTime;
     public Order(int clientId, int drinkId, LocalDateTime orderTime) {
         this.clientId = clientId;
         this.drinkId = drinkId;
         this.orderTime = orderTime;
-        this.dessertId = 0; // Даем значение по умолчанию
+        this.dessertId = 0;
     }
-    public Order(int id, int clientId, int drinkId, int dessertId, LocalDateTime orderTime) {
-        this.id = id;
+    public Order(int clientId, int drinkId, int dessertId, LocalDateTime orderTime) {
         this.clientId = clientId;
         this.drinkId = drinkId;
         this.dessertId = dessertId;
-        this.orderTime = orderTime;
-    }
-    public int getId() {
-        return id;
-    }
-    public void setId(int id) {
-        this.id = id;
-    }
-    public int getClientId() {
-        return clientId;
-    }
-    public void setClientId(int clientId) {
-        if (clientId < 0) {
-            throw new IllegalArgumentException("Client ID cannot be negative");
-        }
-        this.clientId = clientId;
-    }
-    public int getDrinkId() {
-        return drinkId;
-    }
-    public void setDrinkId(int drinkId) {
-        if (drinkId < 0) {
-            throw new IllegalArgumentException("Drink ID cannot be negative");
-        }
-        this.drinkId = drinkId;
-    }
-    public int getDessertId() {
-        return dessertId;
-    }
-    public void setDessertId(int dessertId) {
-        if (dessertId < 0) {
-            throw new IllegalArgumentException("Dessert ID cannot be negative");
-        }
-        this.dessertId = dessertId;
-    }
-    public LocalDateTime getOrderTime() {
-        return orderTime;
-    }
-    public void setOrderTime(LocalDateTime orderTime) {
         this.orderTime = orderTime;
     }
     @Override

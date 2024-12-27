@@ -1,127 +1,121 @@
 package org.example.dao;
+
 import org.example.model.Customer;
-import java.sql.*;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.stereotype.Repository;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
+
+@Repository
 public class CustomerDaoImpl implements CustomerDao {
-    private final Connection connection;
-    public CustomerDaoImpl(Connection connection) {
-        this.connection = connection;
+    private final JdbcTemplate jdbcTemplate;
+
+    public CustomerDaoImpl(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
+    }
+
+    private RowMapper<Customer> customerRowMapper = (rs, rowNum) -> new Customer(
+            rs.getInt("id"),
+            rs.getString("name"),
+            rs.getString("email"),
+            rs.getDate("birth_date").toLocalDate(),
+            rs.getDate("registration_date").toLocalDate(),
+            rs.getDouble("discount")
+    );
+
+    @Override
+    public void insertCustomer(Customer customer) {
+        String sql = "INSERT INTO Customers (name, email, birth_date, registration_date, discount) VALUES (?, ?, ?, ?, ?)";
+        jdbcTemplate.update(sql, customer.getName(), customer.getEmail(), customer.getBirthDate(), customer.getRegistrationDate(), customer.getDiscount());
+    }
+
+    @Override
+    public void updateCustomer(Customer customer) {
+        String sql = "UPDATE Customers SET name = ?, email = ?, birth_date = ?, registration_date = ?, discount = ? WHERE id = ?";
+        jdbcTemplate.update(sql, customer.getName(), customer.getEmail(), customer.getBirthDate(), customer.getRegistrationDate(), customer.getDiscount(), customer.getId());
+    }
+
+    @Override
+    public void deleteCustomer(int customerId) {
+        String sql = "DELETE FROM Customers WHERE id = ?";
+        jdbcTemplate.update(sql, customerId);
+    }
+
+    @Override
+    public Customer getCustomerById(int customerId) {
+        String sql = "SELECT * FROM Customers WHERE id = ?";
+        return jdbcTemplate.queryForObject(sql, customerRowMapper, customerId);
     }
     @Override
-    public Connection getConnection() throws SQLException {
-        return connection;
+    public List<Customer> getAllCustomers() {
+        String sql = "SELECT * FROM Customers";
+        return jdbcTemplate.query(sql, customerRowMapper);
     }
     @Override
-    public void insertCustomer(Customer customer) throws SQLException {
-        String insertCustomerSQL = "INSERT INTO Customers (name, email, registration_date) VALUES (?, ?, ?)";
-        try (PreparedStatement ps = connection.prepareStatement(insertCustomerSQL)) {
-            ps.setString(1, customer.getName());
-            ps.setString(2, customer.getEmail());
-            ps.setDate(3, Date.valueOf(customer.getRegistrationDate()));
-            ps.executeUpdate();
-            System.out.println("Customer inserted successfully.");
-        }
+    public List<Customer> getCustomersByRegistrationDate(LocalDate date) {
+        String sql = "SELECT * FROM Customers WHERE registration_date = ?";
+        return jdbcTemplate.query(sql, customerRowMapper, date);
     }
     @Override
-    public void updateCustomer(Customer customer) throws SQLException {
-        String updateCustomerSQL = "UPDATE Customers SET name = ?, email = ?, registration_date = ? WHERE id = ?";
-        try (PreparedStatement ps = connection.prepareStatement(updateCustomerSQL)) {
-            ps.setString(1, customer.getName());
-            ps.setString(2, customer.getEmail());
-            ps.setDate(3, Date.valueOf(customer.getRegistrationDate()));
-            ps.setInt(4, customer.getId());
-            ps.executeUpdate();
-            System.out.println("Customer updated successfully.");
-        }
+    public List<Customer> getCustomersByQuery(String query) {
+        return jdbcTemplate.query(query, customerRowMapper);
     }
     @Override
-    public void deleteCustomer(int customerId) throws SQLException {
-        String deleteCustomerSQL = "DELETE FROM Customers WHERE id = ?";
-        try (PreparedStatement ps = connection.prepareStatement(deleteCustomerSQL)) {
-            ps.setInt(1, customerId);
-            ps.executeUpdate();
-            System.out.println("Customer deleted successfully.");
-        }
+    public Customer getCustomerByQuery(String query) {
+        return jdbcTemplate.queryForObject(query, customerRowMapper);
     }
     @Override
-    public Customer getCustomerById(int customerId) throws SQLException {
-        String selectCustomerSQL = "SELECT * FROM Customers WHERE id = ?";
-        try (PreparedStatement ps = connection.prepareStatement(selectCustomerSQL)) {
-            ps.setInt(1, customerId);
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    String name = rs.getString("name");
-                    String email = rs.getString("email");
-                    LocalDate registrationDate = rs.getDate("registration_date").toLocalDate();
-                    return new Customer(customerId, name, email, registrationDate);
-                }
-            }
-        }
-        return null;
+    public JdbcTemplate getJdbcTemplate() {
+        return jdbcTemplate;
+    }
+
+    @Override
+    public double getMinDiscount() {
+        String sql = "SELECT MIN(discount) FROM Customers";
+        return jdbcTemplate.queryForObject(sql, Double.class);
     }
     @Override
-    public List<Customer> getAllCustomers() throws SQLException {
-        List<Customer> customers = new ArrayList<>();
-        String selectAllCustomersSQL = "SELECT * FROM Customers";
-        try (PreparedStatement ps = connection.prepareStatement(selectAllCustomersSQL);
-             ResultSet rs = ps.executeQuery()) {
-            while (rs.next()) {
-                int id = rs.getInt("id");
-                String name = rs.getString("name");
-                String email = rs.getString("email");
-                LocalDate registrationDate = rs.getDate("registration_date").toLocalDate();
-                customers.add(new Customer(id, name, email, registrationDate));
-            }
-        }
-        return customers;
+    public double getMaxDiscount() {
+        String sql = "SELECT MAX(discount) FROM Customers";
+        return jdbcTemplate.queryForObject(sql, Double.class);
     }
     @Override
-    public List<Customer> getCustomersByRegistrationDate(LocalDate date) throws SQLException {
-        String query = "SELECT * FROM Customers WHERE registration_date = ?";
-        try (PreparedStatement ps = connection.prepareStatement(query)) {
-            ps.setDate(1, Date.valueOf(date));
-            ResultSet rs = ps.executeQuery();
-            List<Customer> customers = new ArrayList<>();
-            while (rs.next()) {
-                customers.add(new Customer(
-                        rs.getInt("id"),
-                        rs.getString("name"),
-                        rs.getString("email"),
-                        rs.getDate("registration_date").toLocalDate()
-                ));
-            }
-            return customers;
-        }
+    public double getAvgDiscount() {
+        String sql = "SELECT AVG(discount) FROM Customers";
+        return jdbcTemplate.queryForObject(sql, Double.class);
     }
     @Override
-    public List<Customer> getCustomersByQuery(String query) throws SQLException {
-        List<Customer> customers = new ArrayList<>();
-        try (PreparedStatement ps = connection.prepareStatement(query);
-             ResultSet rs = ps.executeQuery()) {
-            while (rs.next()) {
-                int id = rs.getInt("id");
-                String name = rs.getString("name");
-                String email = rs.getString("email");
-                LocalDate registrationDate = rs.getDate("registration_date").toLocalDate();
-                customers.add(new Customer(id, name, email, registrationDate));
-            }
-        }
-        return customers;
+    public List<Customer> getCustomersWithMinDiscount() {
+        String sql = "SELECT * FROM Customers WHERE discount = (SELECT MIN(discount) FROM Customers)";
+        return jdbcTemplate.query(sql, customerRowMapper);
     }
     @Override
-    public Customer getCustomerByQuery(String query) throws SQLException {
-        try (PreparedStatement ps = connection.prepareStatement(query);
-             ResultSet rs = ps.executeQuery()) {
-            if (rs.next()) {
-                int id = rs.getInt("id");
-                String name = rs.getString("name");
-                String email = rs.getString("email");
-                LocalDate registrationDate = rs.getDate("registration_date").toLocalDate();
-                return new Customer(id, name, email, registrationDate);
-            }
-        }
-        return null;
+    public List<Customer> getCustomersWithMaxDiscount() {
+        String sql = "SELECT * FROM Customers WHERE discount = (SELECT MAX(discount) FROM Customers)";
+        return jdbcTemplate.query(sql, customerRowMapper);
+    }
+    @Override
+    public Customer getYoungestCustomer() {
+        String sql = "SELECT * FROM Customers ORDER BY birth_date DESC LIMIT 1";
+        return jdbcTemplate.queryForObject(sql, customerRowMapper);
+    }
+    @Override
+    public Customer getOldestCustomer() {
+        String sql = "SELECT * FROM Customers ORDER BY birth_date ASC LIMIT 1";
+        return jdbcTemplate.queryForObject(sql, customerRowMapper);
+    }
+    @Override
+    public List<Customer> getCustomersWithBirthdayToday() {
+        String sql = "SELECT * FROM Customers WHERE EXTRACT(MONTH FROM birth_date) = EXTRACT(MONTH FROM CURRENT_DATE) AND EXTRACT(DAY FROM birth_date) = EXTRACT(DAY FROM CURRENT_DATE)";
+        return jdbcTemplate.query(sql, customerRowMapper);
+    }
+    @Override
+    public List<Customer> getCustomersWithNoEmail() {
+        String sql = "SELECT * FROM Customers WHERE email IS NULL OR email = ''";
+        return jdbcTemplate.query(sql, customerRowMapper);
     }
 }

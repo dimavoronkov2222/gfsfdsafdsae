@@ -1,95 +1,43 @@
 package org.example.controller;
 import org.example.model.Customer;
 import org.example.service.CustomerService;
-import java.sql.SQLException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 import java.util.List;
+@RestController
+@RequestMapping("/customers")
 public class CustomerController {
     private final CustomerService customerService;
+    @Autowired
     public CustomerController(CustomerService customerService) {
         this.customerService = customerService;
     }
-    public void handleViewAllCustomers() {
-        try {
-            List<Customer> customers = customerService.getCustomersWithNoEmail();
-            if (customers.isEmpty()) {
-                System.out.println("No customers found.");
-            } else {
-                customers.forEach(customer -> System.out.println(customer));
-            }
-        } catch (SQLException e) {
-            System.err.println("Error retrieving customers: " + e.getMessage());
-        }
+    @GetMapping("/no-email")
+    public List<Customer> getCustomersWithNoEmail() {
+        return customerService.getCustomersWithNoEmail();
     }
-    public void handleGetMinDiscount() {
-        try {
-            double minDiscount = customerService.getMinDiscount();
-            System.out.println("Minimum discount: " + minDiscount);
-        } catch (SQLException e) {
-            System.err.println("Error retrieving min discount: " + e.getMessage());
-        }
+    @GetMapping("/min-discount")
+    public double getMinDiscount() {
+        return customerService.getMinDiscount();
     }
-    public void handleGetMaxDiscount() {
-        try {
-            double maxDiscount = customerService.getMaxDiscount();
-            System.out.println("Maximum discount: " + maxDiscount);
-        } catch (SQLException e) {
-            System.err.println("Error retrieving max discount: " + e.getMessage());
-        }
+    @GetMapping("/max-discount")
+    public double getMaxDiscount() {
+        return customerService.getMaxDiscount();
     }
-    public void handleGetAvgDiscount() {
-        try {
-            double avgDiscount = customerService.getAvgDiscount();
-            System.out.println("Average discount: " + avgDiscount);
-        } catch (SQLException e) {
-            System.err.println("Error retrieving average discount: " + e.getMessage());
-        }
+    @GetMapping("/avg-discount")
+    public double getAvgDiscount() {
+        return customerService.getAvgDiscount();
     }
-    public void handleGetYoungestCustomer() {
-        try {
-            Customer customer = customerService.getYoungestCustomer();
-            if (customer != null) {
-                System.out.println("Youngest customer: " + customer);
-            } else {
-                System.out.println("No customer found.");
-            }
-        } catch (SQLException e) {
-            System.err.println("Error retrieving youngest customer: " + e.getMessage());
-        }
+    @GetMapping("/youngest")
+    public Customer getYoungestCustomer() {
+        return customerService.getYoungestCustomer();
     }
-    public void handleGetOldestCustomer() {
-        try {
-            Customer customer = customerService.getOldestCustomer();
-            if (customer != null) {
-                System.out.println("Oldest customer: " + customer);
-            } else {
-                System.out.println("No customer found.");
-            }
-        } catch (SQLException e) {
-            System.err.println("Error retrieving oldest customer: " + e.getMessage());
-        }
+    @GetMapping("/oldest")
+    public Customer getOldestCustomer() {
+        return customerService.getOldestCustomer();
     }
-    public void handleGetCustomersWithBirthdayToday() {
-        try {
-            List<Customer> customers = customerService.getCustomersWithBirthdayToday();
-            if (customers.isEmpty()) {
-                System.out.println("No customers have a birthday today.");
-            } else {
-                customers.forEach(customer -> System.out.println(customer));
-            }
-        } catch (SQLException e) {
-            System.err.println("Error retrieving customers with birthday today: " + e.getMessage());
-        }
-    }
-    public void handleGetCustomersWithNoEmail() {
-        try {
-            List<Customer> customers = customerService.getCustomersWithNoEmail();
-            if (customers.isEmpty()) {
-                System.out.println("No customers without email.");
-            } else {
-                customers.forEach(customer -> System.out.println(customer));
-            }
-        } catch (SQLException e) {
-            System.err.println("Error retrieving customers without email: " + e.getMessage());
-        }
+    @GetMapping("/birthday-today")
+    public List<Customer> getCustomersWithBirthdayToday() {
+        return customerService.getCustomersWithBirthdayToday();
     }
 }

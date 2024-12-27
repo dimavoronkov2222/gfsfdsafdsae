@@ -1,25 +1,22 @@
 package org.example.dao;
 import org.example.model.Order;
-import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.List;
 public interface OrderDao {
-    void insertOrder(Order order) throws SQLException;
-    void updateOrder(Order order) throws SQLException;
-    void deleteOrder(int orderId) throws SQLException;
-    Order getOrderById(int orderId) throws SQLException;
-    List<Order> getAllOrders() throws SQLException;
-    List<Order> getOrdersByDate(LocalDateTime date) throws SQLException;
-    List<Order> getOrdersByDateRange(LocalDateTime startDate, LocalDateTime endDate) throws SQLException;
-    int countDessertOrdersByDate(LocalDateTime date) throws SQLException;
-    int countDrinkOrdersByDate(LocalDateTime date) throws SQLException;
-    double getAverageOrderAmountByDate(LocalDateTime date) throws SQLException;
-    double getMaxOrderAmountByDate(LocalDateTime date) throws SQLException;
-    int getClientWithMaxOrderAmount(LocalDateTime date) throws SQLException;
-    List<Order> getOrdersBySpecificDate(LocalDateTime date) throws SQLException;
-    List<Order> getOrdersInDateRange(LocalDateTime startDate, LocalDateTime endDate) throws SQLException;
-    int countDessertsInOrdersOnDate(LocalDateTime date) throws SQLException;
-    int countDrinksInOrdersOnDate(LocalDateTime date) throws SQLException;
+    void insertOrder(Order order);
+    void updateOrder(Order order);
+    void deleteOrder(int orderId);
+    Order getOrderById(int orderId);
+    List<Order> getAllOrders();
+    List<Order> getOrdersByDate(LocalDateTime date);
+    List<Order> getOrdersByDateRange(LocalDateTime startDate, LocalDateTime endDate);
+    int countDessertOrdersByDate(LocalDateTime date);
+    int countDrinkOrdersByDate(LocalDateTime date);
+    double getAverageOrderAmountByDate(LocalDateTime date);
+    double getMaxOrderAmountByDate(LocalDateTime date);
+    int getClientWithMaxOrderAmount(LocalDateTime date);
+    List<Order> getOrdersBySpecificDate(LocalDateTime date);
+    List<Order> getOrdersInDateRange(LocalDateTime startDate, LocalDateTime endDate);
+    int countDessertsInOrdersOnDate(LocalDateTime date);
+    int countDrinksInOrdersOnDate(LocalDateTime date);
 }
-
-

@@ -1,40 +1,46 @@
 package org.example.dao;
 import org.example.model.Customer;
 import org.junit.jupiter.api.*;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class CustomerDaoImplTest {
-    private Connection connection;
+    private DriverManagerDataSource dataSource;
+    private JdbcTemplate jdbcTemplate;
     private CustomerDao customerDao;
     @BeforeAll
-    void setupDatabaseConnection() throws SQLException {
-        String url = "jdbc:postgresql://localhost:5432/CoffeeShop";
-        String user = "postgres";
-        String password = "8289/00/5654";
-        connection = DriverManager.getConnection(url, user, password);
-        customerDao = new CustomerDaoImpl(connection);
-        try (var stmt = connection.createStatement()) {
+    void setupDatabaseConnection() {
+        dataSource = new DriverManagerDataSource();
+        dataSource.setDriverClassName("org.postgresql.Driver");
+        dataSource.setUrl("jdbc:postgresql://localhost:5432/CoffeeShop");
+        dataSource.setUsername("postgres");
+        dataSource.setPassword("8289/00/5654");
+        jdbcTemplate = new JdbcTemplate(dataSource);
+        customerDao = new CustomerDaoImpl(jdbcTemplate);
+        try (Connection connection = dataSource.getConnection(); var stmt = connection.createStatement()) {
             stmt.execute("CREATE TABLE IF NOT EXISTS Customers (" +
                     "id SERIAL PRIMARY KEY, " +
                     "name VARCHAR(100), " +
                     "email VARCHAR(100), " +
                     "registration_date DATE)");
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
     @BeforeEach
     void cleanDatabase() throws SQLException {
-        try (var stmt = connection.createStatement()) {
+        try (Connection connection = dataSource.getConnection(); var stmt = connection.createStatement()) {
             stmt.execute("TRUNCATE TABLE Customers");
         }
     }
     @AfterAll
     void closeDatabaseConnection() throws SQLException {
-        connection.close();
+        dataSource.getConnection().close();
     }
     @Test
     void testInsertCustomer() throws SQLException {
