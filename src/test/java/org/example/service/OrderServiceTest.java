@@ -8,7 +8,7 @@ import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 class OrderServiceTest {
     private OrderDao orderDao;
@@ -22,13 +22,17 @@ class OrderServiceTest {
     void placeOrder() throws SQLException {
         Order order = new Order(1, 1, LocalDateTime.now());
         orderService.placeOrder(order);
-        verify(orderDao, times(1)).insertOrder(order);
+        ArgumentCaptor<Order> orderCaptor = ArgumentCaptor.forClass(Order.class);
+        verify(orderDao, times(1)).insertOrder(orderCaptor.capture());
+        assertEquals(order, orderCaptor.getValue());
     }
     @Test
     void updateOrder() throws SQLException {
         Order order = new Order(1, 1, 1, 1, LocalDateTime.now());
         orderService.updateOrder(order);
-        verify(orderDao, times(1)).updateOrder(order);
+        ArgumentCaptor<Order> orderCaptor = ArgumentCaptor.forClass(Order.class);
+        verify(orderDao, times(1)).updateOrder(orderCaptor.capture());
+        assertEquals(order, orderCaptor.getValue());
     }
     @Test
     void removeOrder() throws SQLException {
@@ -53,7 +57,7 @@ class OrderServiceTest {
         );
         when(orderDao.getAllOrders()).thenReturn(expectedOrders);
         List<Order> actualOrders = orderService.getAllOrders();
-        assertEquals(expectedOrders, actualOrders);
+        assertIterableEquals(expectedOrders, actualOrders);
         verify(orderDao, times(1)).getAllOrders();
     }
 }

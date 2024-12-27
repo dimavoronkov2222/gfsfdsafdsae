@@ -10,6 +10,7 @@ public class Order {
         this.clientId = clientId;
         this.drinkId = drinkId;
         this.orderTime = orderTime;
+        this.dessertId = 0; // Даем значение по умолчанию
     }
     public Order(int id, int clientId, int drinkId, int dessertId, LocalDateTime orderTime) {
         this.id = id;
@@ -28,18 +29,27 @@ public class Order {
         return clientId;
     }
     public void setClientId(int clientId) {
+        if (clientId < 0) {
+            throw new IllegalArgumentException("Client ID cannot be negative");
+        }
         this.clientId = clientId;
     }
     public int getDrinkId() {
         return drinkId;
     }
     public void setDrinkId(int drinkId) {
+        if (drinkId < 0) {
+            throw new IllegalArgumentException("Drink ID cannot be negative");
+        }
         this.drinkId = drinkId;
     }
     public int getDessertId() {
         return dessertId;
     }
     public void setDessertId(int dessertId) {
+        if (dessertId < 0) {
+            throw new IllegalArgumentException("Dessert ID cannot be negative");
+        }
         this.dessertId = dessertId;
     }
     public LocalDateTime getOrderTime() {

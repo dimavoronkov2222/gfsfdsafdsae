@@ -6,18 +6,20 @@ import java.util.List;
 import java.util.Scanner;
 public class DrinkController {
     private final DrinkService drinkService;
+    private final Scanner scanner;
     public DrinkController(DrinkService drinkService) {
         this.drinkService = drinkService;
+        this.scanner = new Scanner(System.in);
     }
     public void handleAddDrink() {
-        Scanner scanner = new Scanner(System.in);
         System.out.println("Enter drink name (English):");
-        String nameEn = scanner.nextLine();
+        String name = scanner.nextLine();
         System.out.println("Enter drink name (Other language):");
         String nameOther = scanner.nextLine();
         System.out.println("Enter drink price:");
         double price = scanner.nextDouble();
-        Drink drink = new Drink(nameEn, nameOther, price);
+        scanner.nextLine();
+        Drink drink = new Drink(1, name, nameOther, price);
         try {
             drinkService.addDrink(drink);
             System.out.println("Drink added successfully.");
@@ -26,17 +28,17 @@ public class DrinkController {
         }
     }
     public void handleUpdateDrink() {
-        Scanner scanner = new Scanner(System.in);
         System.out.println("Enter drink ID to update:");
         int id = scanner.nextInt();
-        scanner.nextLine();
+        scanner.nextLine();  // Чтобы очистить буфер после чтения числа
         System.out.println("Enter new drink name (English):");
-        String nameEn = scanner.nextLine();
+        String name = scanner.nextLine();
         System.out.println("Enter new drink name (Other language):");
         String nameOther = scanner.nextLine();
         System.out.println("Enter new drink price:");
         double price = scanner.nextDouble();
-        Drink drink = new Drink(id, nameEn, nameOther, price);
+        scanner.nextLine();
+        Drink drink = new Drink(1, name, nameOther, price);
         try {
             drinkService.updateDrink(drink);
             System.out.println("Drink updated successfully.");
@@ -45,7 +47,6 @@ public class DrinkController {
         }
     }
     public void handleDeleteDrink() {
-        Scanner scanner = new Scanner(System.in);
         System.out.println("Enter drink ID to delete:");
         int id = scanner.nextInt();
         try {

@@ -33,24 +33,27 @@ class OrderDaoImplTest {
     }
     @Test
     void insertOrder() throws SQLException {
-        Order order = new Order(1, 1, LocalDateTime.now());
+        Order order = new Order(1, 1, LocalDateTime.of(2024, 12, 27, 12, 0));
         orderDao.insertOrder(order);
         List<Order> orders = orderDao.getAllOrders();
         assertEquals(1, orders.size());
         assertEquals(1, orders.get(0).getClientId());
+        assertEquals(1, orders.get(0).getDrinkId());
     }
     @Test
     void updateOrder() throws SQLException {
-        Order order = new Order(1, 1, LocalDateTime.now());
+        Order order = new Order(1, 1, LocalDateTime.of(2024, 12, 27, 12, 0));
         orderDao.insertOrder(order);
-        Order updatedOrder = new Order(1, 1, 2, 2, LocalDateTime.now());
+        Order updatedOrder = new Order(1, 1, 2, 2, LocalDateTime.of(2024, 12, 27, 13, 0));
         orderDao.updateOrder(updatedOrder);
         Order retrievedOrder = orderDao.getOrderById(1);
         assertEquals(2, retrievedOrder.getDrinkId());
+        assertEquals(2, retrievedOrder.getDessertId());
+        assertEquals(LocalDateTime.of(2024, 12, 27, 13, 0), retrievedOrder.getOrderTime());
     }
     @Test
     void deleteOrder() throws SQLException {
-        Order order = new Order(1, 1, LocalDateTime.now());
+        Order order = new Order(1, 1, LocalDateTime.of(2024, 12, 27, 12, 0));
         orderDao.insertOrder(order);
         orderDao.deleteOrder(1);
         List<Order> orders = orderDao.getAllOrders();
@@ -58,16 +61,18 @@ class OrderDaoImplTest {
     }
     @Test
     void getOrderById() throws SQLException {
-        Order order = new Order(1, 1, LocalDateTime.now());
+        Order order = new Order(1, 1, LocalDateTime.of(2024, 12, 27, 12, 0));
         orderDao.insertOrder(order);
         Order retrievedOrder = orderDao.getOrderById(1);
         assertNotNull(retrievedOrder);
         assertEquals(1, retrievedOrder.getClientId());
+        assertEquals(1, retrievedOrder.getDrinkId());
+        assertEquals(LocalDateTime.of(2024, 12, 27, 12, 0), retrievedOrder.getOrderTime());
     }
     @Test
     void getAllOrders() throws SQLException {
-        Order order1 = new Order(1, 1, LocalDateTime.now());
-        Order order2 = new Order(2, 2, LocalDateTime.now());
+        Order order1 = new Order(1, 1, LocalDateTime.of(2024, 12, 27, 12, 0));
+        Order order2 = new Order(2, 2, LocalDateTime.of(2024, 12, 27, 13, 0));
         orderDao.insertOrder(order1);
         orderDao.insertOrder(order2);
         List<Order> orders = orderDao.getAllOrders();

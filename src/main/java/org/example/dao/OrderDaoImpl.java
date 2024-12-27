@@ -1,6 +1,7 @@
 package org.example.dao;
 import org.example.model.Order;
 import java.sql.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 public class OrderDaoImpl implements OrderDao {
@@ -75,5 +76,174 @@ public class OrderDaoImpl implements OrderDao {
             }
         }
         return orders;
+    }
+    @Override
+    public List<Order> getOrdersByDate(LocalDateTime date) throws SQLException {
+        String query = "SELECT * FROM Orders WHERE DATE(order_time) = ?";
+        try (PreparedStatement ps = connection.prepareStatement(query)) {
+            ps.setTimestamp(1, Timestamp.valueOf(date));
+            ResultSet rs = ps.executeQuery();
+            List<Order> orders = new ArrayList<>();
+            while (rs.next()) {
+                orders.add(new Order(
+                        rs.getInt("id"),
+                        rs.getInt("client_id"),
+                        rs.getInt("drink_id"),
+                        rs.getInt("dessert_id"),
+                        rs.getTimestamp("order_time").toLocalDateTime()
+                ));
+            }
+            return orders;
+        }
+    }
+    @Override
+    public List<Order> getOrdersByDateRange(LocalDateTime startDate, LocalDateTime endDate) throws SQLException {
+        String query = "SELECT * FROM Orders WHERE order_time BETWEEN ? AND ?";
+        try (PreparedStatement ps = connection.prepareStatement(query)) {
+            ps.setTimestamp(1, Timestamp.valueOf(startDate));
+            ps.setTimestamp(2, Timestamp.valueOf(endDate));
+            ResultSet rs = ps.executeQuery();
+            List<Order> orders = new ArrayList<>();
+            while (rs.next()) {
+                orders.add(new Order(
+                        rs.getInt("id"),
+                        rs.getInt("client_id"),
+                        rs.getInt("drink_id"),
+                        rs.getInt("dessert_id"),
+                        rs.getTimestamp("order_time").toLocalDateTime()
+                ));
+            }
+            return orders;
+        }
+    }
+    @Override
+    public List<Order> getOrdersInDateRange(LocalDateTime startDate, LocalDateTime endDate) throws SQLException {
+        String query = "SELECT * FROM Orders WHERE order_time BETWEEN ? AND ?";
+        try (PreparedStatement ps = connection.prepareStatement(query)) {
+            ps.setTimestamp(1, Timestamp.valueOf(startDate));
+            ps.setTimestamp(2, Timestamp.valueOf(endDate));
+            ResultSet rs = ps.executeQuery();
+            List<Order> orders = new ArrayList<>();
+            while (rs.next()) {
+                orders.add(new Order(
+                        rs.getInt("id"),
+                        rs.getInt("client_id"),
+                        rs.getInt("drink_id"),
+                        rs.getInt("dessert_id"),
+                        rs.getTimestamp("order_time").toLocalDateTime()
+                ));
+            }
+            return orders;
+        }
+    }
+    @Override
+    public List<Order> getOrdersBySpecificDate(LocalDateTime date) throws SQLException {
+        String query = "SELECT * FROM Orders WHERE DATE(order_time) = ?";
+        try (PreparedStatement ps = connection.prepareStatement(query)) {
+            ps.setTimestamp(1, Timestamp.valueOf(date));
+            ResultSet rs = ps.executeQuery();
+            List<Order> orders = new ArrayList<>();
+            while (rs.next()) {
+                orders.add(new Order(
+                        rs.getInt("id"),
+                        rs.getInt("client_id"),
+                        rs.getInt("drink_id"),
+                        rs.getInt("dessert_id"),
+                        rs.getTimestamp("order_time").toLocalDateTime()
+                ));
+            }
+            return orders;
+        }
+    }
+    @Override
+    public int countDessertOrdersByDate(LocalDateTime date) throws SQLException {
+        String query = "SELECT COUNT(*) FROM Orders WHERE DATE(order_time) = ? AND dessert_id IS NOT NULL";
+        try (PreparedStatement ps = connection.prepareStatement(query)) {
+            ps.setTimestamp(1, Timestamp.valueOf(date));
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        }
+        return 0;
+    }
+    @Override
+    public int countDrinkOrdersByDate(LocalDateTime date) throws SQLException {
+        String query = "SELECT COUNT(*) FROM Orders WHERE DATE(order_time) = ? AND drink_id IS NOT NULL";
+        try (PreparedStatement ps = connection.prepareStatement(query)) {
+            ps.setTimestamp(1, Timestamp.valueOf(date));
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        }
+        return 0;
+    }
+    @Override
+    public double getAverageOrderAmountByDate(LocalDateTime date) throws SQLException {
+        String query = "SELECT AVG(amount) FROM Orders WHERE DATE(order_time) = ?";
+        try (PreparedStatement ps = connection.prepareStatement(query)) {
+            ps.setTimestamp(1, Timestamp.valueOf(date));
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getDouble(1);
+                }
+            }
+        }
+        return 0.0;
+    }
+    @Override
+    public double getMaxOrderAmountByDate(LocalDateTime date) throws SQLException {
+        String query = "SELECT MAX(amount) FROM Orders WHERE DATE(order_time) = ?";
+        try (PreparedStatement ps = connection.prepareStatement(query)) {
+            ps.setTimestamp(1, Timestamp.valueOf(date));
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getDouble(1);
+                }
+            }
+        }
+        return 0.0;
+    }
+    @Override
+    public int getClientWithMaxOrderAmount(LocalDateTime date) throws SQLException {
+        String query = "SELECT client_id FROM Orders WHERE DATE(order_time) = ? ORDER BY amount DESC LIMIT 1";
+        try (PreparedStatement ps = connection.prepareStatement(query)) {
+            ps.setTimestamp(1, Timestamp.valueOf(date));
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        }
+        return 0;
+    }
+    @Override
+    public int countDessertsInOrdersOnDate(LocalDateTime date) throws SQLException {
+        String query = "SELECT COUNT(*) FROM Orders WHERE DATE(order_time) = ? AND dessert_id IS NOT NULL";
+        try (PreparedStatement ps = connection.prepareStatement(query)) {
+            ps.setTimestamp(1, Timestamp.valueOf(date));
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        }
+        return 0;
+    }
+    @Override
+    public int countDrinksInOrdersOnDate(LocalDateTime date) throws SQLException {
+        String query = "SELECT COUNT(*) FROM Orders WHERE DATE(order_time) = ? AND drink_id IS NOT NULL";
+        try (PreparedStatement ps = connection.prepareStatement(query)) {
+            ps.setTimestamp(1, Timestamp.valueOf(date));
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        }
+        return 0;
     }
 }

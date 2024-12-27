@@ -1,19 +1,18 @@
 package org.example.model;
+import java.time.LocalDateTime;
 public class Drink {
     private int id;
-    private String nameEn;
-    private String nameOther;
+    private String name;
+    private String drinkType;
     private double price;
-    public Drink(int id, String nameEn, String nameOther, double price) {
+    private LocalDateTime drinkTime;
+    private String nameOther;
+    public Drink(int i, String name, String drinkType, double price) {
         this.id = id;
-        this.nameEn = nameEn;
-        this.nameOther = nameOther;
+        this.name = name;
+        this.drinkType = drinkType;
         this.price = price;
-    }
-    public Drink(String nameEn, String nameOther, double price) {
-        this.nameEn = nameEn;
-        this.nameOther = nameOther;
-        this.price = price;
+        this.drinkTime = drinkTime;
     }
     public int getId() {
         return id;
@@ -21,17 +20,17 @@ public class Drink {
     public void setId(int id) {
         this.id = id;
     }
-    public String getNameEn() {
-        return nameEn;
+    public String getName() {
+        return name;
     }
-    public void setNameEn(String nameEn) {
-        this.nameEn = nameEn;
+    public void setName(String name) {
+        this.name = name;
     }
-    public String getNameOther() {
-        return nameOther;
+    public String getDrinkType() {
+        return drinkType;
     }
-    public void setNameOther(String nameOther) {
-        this.nameOther = nameOther;
+    public void setDrinkType(String drinkType) {
+        this.drinkType = drinkType;
     }
     public double getPrice() {
         return price;
@@ -39,13 +38,16 @@ public class Drink {
     public void setPrice(double price) {
         this.price = price;
     }
-    @Override
-    public String toString() {
-        return "Drink{" +
-                "id=" + id +
-                ", nameEn='" + nameEn + '\'' +
-                ", nameOther='" + nameOther + '\'' +
-                ", price=" + price +
-                '}';
+    public LocalDateTime getDrinkTime() {
+        return drinkTime;
+    }
+    public void setDrinkTime(LocalDateTime drinkTime) {
+        this.drinkTime = drinkTime;
+    }
+    public String getNameOther() {
+        return nameOther;
+    }
+    public void setNameOther(String nameOther) {
+        this.nameOther = nameOther;
     }
 }

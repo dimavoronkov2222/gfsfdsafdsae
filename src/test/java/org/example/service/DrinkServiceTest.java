@@ -1,13 +1,13 @@
 package org.example.service;
 import org.example.dao.DrinkDao;
 import org.example.model.Drink;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
+import org.mockito.ArgumentCaptor;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
 import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.*;
 class DrinkServiceTest {
     private DrinkDao drinkDao;
     private DrinkService drinkService;
@@ -18,15 +18,19 @@ class DrinkServiceTest {
     }
     @Test
     void addDrink() throws SQLException {
-        Drink drink = new Drink(0, "Coffee", "Кофе", 2.5);
+        Drink drink = new Drink(1, "Coffee", "Кофе", 2.5);
         drinkService.addDrink(drink);
-        verify(drinkDao, times(1)).addDrink(drink);
+        ArgumentCaptor<Drink> drinkCaptor = ArgumentCaptor.forClass(Drink.class);
+        verify(drinkDao, times(1)).addDrink(drinkCaptor.capture());
+        assertEquals(drink, drinkCaptor.getValue());
     }
     @Test
     void updateDrink() throws SQLException {
         Drink drink = new Drink(1, "Tea", "Чай", 1.5);
         drinkService.updateDrink(drink);
-        verify(drinkDao, times(1)).updateDrink(drink);
+        ArgumentCaptor<Drink> drinkCaptor = ArgumentCaptor.forClass(Drink.class);
+        verify(drinkDao, times(1)).updateDrink(drinkCaptor.capture());
+        assertEquals(drink, drinkCaptor.getValue());
     }
     @Test
     void deleteDrink() throws SQLException {
@@ -37,10 +41,10 @@ class DrinkServiceTest {
     @Test
     void getDrinkById() throws SQLException {
         int drinkId = 1;
-        Drink expectedDrink = new Drink(drinkId, "Coffee", "Кофе", 2.5);
+        Drink expectedDrink = new Drink(1, "Coffee", "Кофе", 2.5);
         when(drinkDao.getDrinkById(drinkId)).thenReturn(expectedDrink);
         Drink actualDrink = drinkService.getDrinkById(drinkId);
-        Assertions.assertEquals(expectedDrink, actualDrink);
+        assertEquals(expectedDrink, actualDrink);
         verify(drinkDao, times(1)).getDrinkById(drinkId);
     }
     @Test
@@ -50,9 +54,8 @@ class DrinkServiceTest {
                 new Drink(2, "Tea", "Чай", 1.5)
         );
         when(drinkDao.getAllDrinks()).thenReturn(expectedDrinks);
-
         List<Drink> actualDrinks = drinkService.getAllDrinks();
-        Assertions.assertEquals(expectedDrinks, actualDrinks);
+        assertIterableEquals(expectedDrinks, actualDrinks);
         verify(drinkDao, times(1)).getAllDrinks();
     }
 }
